@@ -7,6 +7,7 @@ class ContentItemsController < SecureController
 
   def show
     @content_item = ContentItem.find(params[:id])
+    @social_networks = @content_item.social_networks
   end
 
   def new

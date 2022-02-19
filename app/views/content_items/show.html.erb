@@ -9,6 +9,22 @@
 
 <hr>
 
-<% unless @content_item.social_networks.blank? %>
-Publish on: <%= @content_item.social_networks.map(&:description).join(',  ') %>
+<% unless @social_networks.blank? %>
+  <table>
+    <tr>
+      <th>Platform</th>
+      <th>publish date</th>
+      <th>Action</th>
+    </tr>
+    <% @social_networks.each do |social_network| %>
+    <tr>
+      <th><%= social_network.description %></th>
+      <th><%= social_network.publishing_target.publish_date.nil? ? "not specified" :  social_network.publishing_target.publish_date %></th>
+      <th>
+        <%= link_to "Edit publish date", edit_publishing_target_path(social_network.publishing_target) %>
+      </th>
+    </tr>
+    <% end %>
+  </table>
+  
 <% end %>
