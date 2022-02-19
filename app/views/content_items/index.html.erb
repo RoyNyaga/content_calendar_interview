@@ -5,3 +5,7 @@
 <ul id="content-items">
   <%= render partial: 'content_item', collection: @content_items %>
 </ul>
+
+<%= month_calendar do |date| %>
+  <%= date %>
+<% end %>
