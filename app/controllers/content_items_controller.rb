@@ -3,11 +3,12 @@
 class ContentItemsController < SecureController
   def index
     @content_items = current_user.content_items
+    @publishing_targets = PublishingTarget.where(content_item_id: @content_items.pluck(:id))
   end
 
   def show
     @content_item = ContentItem.find(params[:id])
-    @social_networks = @content_item.social_networks
+    @publishing_targets = PublishingTarget.where(content_item_id: @content_item)
   end
 
   def new
