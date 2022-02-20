@@ -1,0 +1,9 @@
+<%= month_calendar(events: @publishing_targets) do |date, publishing_targets| %>
+  <%= date %>
+  <% publishing_targets.each do |publishing_target| %>
+    <div>
+      <div><%= publishing_target.social_network.description %></div>
+      <div><%= publishing_target.content_item.title %></div>
+    </div>
+  <% end %>
+<% end %>
