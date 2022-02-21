@@ -6,9 +6,16 @@ class ContentItemsController < SecureController
     @publishing_targets = PublishingTarget.where(content_item_id: @content_items.pluck(:id))
   end
 
+  # ContentItem.where("lower(title) like ?", "%content%")
+
   def show
     @content_item = ContentItem.find(params[:id])
     @publishing_targets = PublishingTarget.where(content_item_id: @content_item)
+  end
+
+  def search
+    content_items = ContentItem.joins(:action_text_rich_text).where("lower(action_text_rich_texts.body) LIKE ? or lower(title) LIKE ?", "%#{params[:q].downcase}%", "%#{params[:q].downcase}%")
+    @publishing_targets = PublishingTarget.where(content_item_id: content_items.uniq.pluck(:id))
   end
 
   def new

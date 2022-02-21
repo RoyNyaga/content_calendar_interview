@@ -1,0 +1,13 @@
+<div class="midle-nav-bar">
+  <div>
+    <%= form_with url: '/content_items/search', method: :get do |f| %>
+      <%= f.label :q, "Search for:" %>
+      <%= f.text_field :q, id: :q %>
+      <%= f.submit "Search" %>
+    <% end %>
+  </div>
+<div>
+
+<div>
+  <%= render "calendar" %>
+</div>
