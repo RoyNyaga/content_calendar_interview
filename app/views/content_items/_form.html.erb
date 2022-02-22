@@ -15,9 +15,12 @@
     <% content_item.user.social_networks.each do |network| %>
       <li>
         <%= label_tag do %>
-          <%= check_box_tag 'content_item[social_network_ids][]', network.id, content_item.social_network_ids.include?(network.id) %>
+          <%= check_box_tag 'content_item[social_network_ids][]', network.id, 
+          content_item.social_network_ids.include?(network.id), id: "#{network.description}" %>
           <%= network.description %>
         <% end %>
+        <%= form.datetime_local_field :socil_network_date, placeholder: "Enter publishing date", 
+        data_network_textfield_id: "#{network.description}", onchange: "updateCheckBoxValue(event)" %>
       </li>
     <% end %>
   </ul>
@@ -26,3 +29,10 @@
     <%= form.submit %>
   </div>
 <% end %>
+
+<script>
+  function updateCheckBoxValue(e){
+    var checkBox = document.querySelector(`#${e.target.attributes.data_network_textfield_id.value}`)
+    checkBox.value += ` ${e.target.value}`
+  }
+</script>

@@ -1,0 +1,7 @@
+<%= form_with model: @publishing_target do |form| %>
+  <div>
+    <%= form.label :publish_date %>
+    <%= form.datetime_local_field :publish_date %>
+    <%= form.submit "update"%>
+  </div>
+<% end %>
