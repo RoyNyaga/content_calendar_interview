@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   resources :content_items do
     collection do
       get :search
+      get :filter
     end
   end
   resources :social_networks, only: %i[index new create]

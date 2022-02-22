@@ -6,15 +6,7 @@
   <%= render partial: 'content_item', collection: @content_items %>
 </ul>
 
-<div class="midle-nav-bar">
-  <div>
-    <%= form_with url: '/content_items/search', method: :get, local: true do |f| %>
-      <%= f.label :q, "Search for:" %>
-      <%= f.text_field :q, id: :q %>
-      <%= f.submit "Search" %>
-    <% end %>
-  </div>
-<div>
+<%=render "search_filter_nav" %>
 
 <div class="calendar-div">
   <%= render "calendar" %>
