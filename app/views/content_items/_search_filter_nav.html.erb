@@ -7,14 +7,14 @@
     <% end %>
   </div>
 
-  <div>
-    <h4>Filter</h4>
+  <div class="filter-div">
+    <p>Filter</p>
     <%= form_with url: '/content_items/filter', method: :get, local: true do |f| %>
       <%= f.label "Social Network"%>
       <%= f.text_field :social_network_desciption, required: true %>
       <%= f.hidden_field :target_ids, value: "#{@initial_targets.map(&:id).join(",")}" %>
       <%= f.hidden_field :start_date, value: "#{params[:start_date]}" %>
-      <%= f.submit "filter" %>
+      <%= f.submit "Go" %>
     <% end %>
   </div>
-<div>
+</div>
