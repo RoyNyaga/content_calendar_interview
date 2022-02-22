@@ -2,17 +2,17 @@
 class ContentItemsController < SecureController
   def index
     @content_items = current_user.content_items
-    @publishing_targets = PublishingTarget.where(content_item_id: @content_items.pluck(:id))
+    @publishing_targets = PublishingTarget.includes(:social_network).where(content_item_id: @content_items.pluck(:id))
     @initial_targets = @publishing_targets
   end
 
   def show
     @content_item = ContentItem.find(params[:id])
-    @publishing_targets = PublishingTarget.where(content_item_id: @content_item)
+    @publishing_targets = PublishingTarget.includes(:social_network).where(content_item_id: @content_item)
   end
 
   def search
-    content_items = ContentItem.joins(:action_text_rich_text).where("lower(action_text_rich_texts.body) LIKE ? or lower(title) LIKE ?", "%#{params[:q].downcase}%", "%#{params[:q].downcase}%")
+    content_items = current_user.content_items.joins(:action_text_rich_text).where("lower(action_text_rich_texts.body) LIKE ? or lower(title) LIKE ?", "%#{params[:q].downcase}%", "%#{params[:q].downcase}%")
     @publishing_targets = PublishingTarget.where(content_item_id: content_items.uniq.pluck(:id)).order(publish_date: :desc)
     @initial_targets = @publishing_targets
     if params[:start_date].nil?
