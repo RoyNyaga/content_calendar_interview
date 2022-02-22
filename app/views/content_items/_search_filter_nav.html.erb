@@ -2,7 +2,7 @@
   <div>
     <%= form_with url: '/content_items/search', method: :get, local: true do |f| %>
       <%= f.label :q, "Search for:" %>
-      <%= f.text_field :q, id: :q %>
+      <%= f.text_field :q, id: :q, required: true %>
       <%= f.submit "Search" %>
     <% end %>
   </div>
@@ -11,7 +11,7 @@
     <h4>Filter</h4>
     <%= form_with url: '/content_items/filter', method: :get, local: true do |f| %>
       <%= f.label "Social Network"%>
-      <%= f.text_field :social_network_desciption %>
+      <%= f.text_field :social_network_desciption, required: true %>
       <%= f.hidden_field :target_ids, value: "#{@initial_targets.map(&:id).join(",")}" %>
       <%= f.hidden_field :start_date, value: "#{params[:start_date]}" %>
       <%= f.submit "filter" %>

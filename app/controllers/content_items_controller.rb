@@ -15,13 +15,20 @@ class ContentItemsController < SecureController
     content_items = ContentItem.joins(:action_text_rich_text).where("lower(action_text_rich_texts.body) LIKE ? or lower(title) LIKE ?", "%#{params[:q].downcase}%", "%#{params[:q].downcase}%")
     @publishing_targets = PublishingTarget.where(content_item_id: content_items.uniq.pluck(:id)).order(publish_date: :desc)
     @initial_targets = @publishing_targets
-    start_date = @publishing_targets.empty? ? Time.now.strftime("%Y-%m-%d") : @publishing_targets.last.publish_date.strftime("%Y-%m-%d")
+    if params[:start_date].nil?
+      params[:start_date] = !@publishing_targets.empty? && !@publishing_targets.last.publish_date.nil? ? @publishing_targets.last.publish_date.strftime("%Y-%m-%d") : Time.now.strftime("%Y-%m-%d")
+    end
+    flash[:alert] = "#{@publishing_targets.count} Result(s) Found"
   end
 
   def filter
-    @social_network = SocialNetwork.find_by_description(params[:social_network_desciption])
-    @publishing_targets = PublishingTarget.where("id IN (?) AND social_network_id = ?", params[:target_ids].split(","), @social_network.id)
+    @social_network = SocialNetwork.where("lower(description) LIKE ?", "%#{params[:social_network_desciption].downcase}%").first
     @initial_targets = PublishingTarget.where("id IN (?)", params[:target_ids].split(","))
+    @publishing_targets = if @social_network
+                            @initial_targets.where("social_network_id = ?", @social_network.id)
+                          else
+                            []
+                          end
     params[:start_date] =  params[:start_date].empty? ? Time.now.strftime("%Y-%m-%d") : params[:start_date]
   end
 
