@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 class ContentItemsController < SecureController
   def index
     @content_items = current_user.content_items
@@ -33,9 +32,11 @@ class ContentItemsController < SecureController
 
   def create
     @content_item = ContentItem.new(content_item_params)
+    @social_network_ids_with_publish_dates = params[:content_item][:social_network_ids].dup
+    clean_params_social_network_ids
     @content_item.user = current_user
-
     if @content_item.save
+      update_publish_date
       redirect_to content_items_path, notice: "#{@content_item.title} added"
     else
       render :new
@@ -48,9 +49,11 @@ class ContentItemsController < SecureController
 
   def update
     @content_item = ContentItem.find(params[:id])
+    @social_network_ids_with_publish_dates = params[:content_item][:social_network_ids].dup
+    clean_params_social_network_ids
     @content_item.assign_attributes(content_item_params)
-
     if @content_item.save
+      update_publish_date
       redirect_to content_items_path, notice: "#{@content_item.title} updated"
     else
       render :edit
@@ -65,6 +68,20 @@ class ContentItemsController < SecureController
   end
 
   private
+
+  def clean_params_social_network_ids
+    params[:content_item][:social_network_ids].each_with_index do |value,index|
+      params[:content_item][:social_network_ids][index] = value.split(" ").first
+    end
+  end
+
+  def update_publish_date
+    @publishing_targets = PublishingTarget.where(content_item_id: @content_item.id, social_network_id: params[:content_item][:social_network_ids])
+    @social_network_ids_with_publish_dates.each do |id_publish_date|
+      target = @publishing_targets.select { |target| target.social_network_id == id_publish_date.split(" ").first.to_i }.first
+      target.update(publish_date: id_publish_date.split(" ").last) if id_publish_date.split(" ").size == 2
+    end
+  end
 
   def content_item_params
     params.require(:content_item).permit(:title, :body, social_network_ids: [])
