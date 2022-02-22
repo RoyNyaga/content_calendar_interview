@@ -36,7 +36,7 @@ class ContentItemsController < SecureController
     clean_params_social_network_ids
     @content_item.user = current_user
     if @content_item.save
-      update_publish_date
+      PublishingTarget.bulk_publish_date_update(@content_item.id, params[:content_item][:social_network_ids] ,@social_network_ids_with_publish_dates)
       redirect_to content_items_path, notice: "#{@content_item.title} added"
     else
       render :new
@@ -53,7 +53,7 @@ class ContentItemsController < SecureController
     clean_params_social_network_ids
     @content_item.assign_attributes(content_item_params)
     if @content_item.save
-      update_publish_date
+      PublishingTarget.bulk_publish_date_update(params[:id], params[:content_item][:social_network_ids] ,@social_network_ids_with_publish_dates)
       redirect_to content_items_path, notice: "#{@content_item.title} updated"
     else
       render :edit
@@ -72,14 +72,6 @@ class ContentItemsController < SecureController
   def clean_params_social_network_ids
     params[:content_item][:social_network_ids].each_with_index do |value,index|
       params[:content_item][:social_network_ids][index] = value.split(" ").first
-    end
-  end
-
-  def update_publish_date
-    @publishing_targets = PublishingTarget.where(content_item_id: @content_item.id, social_network_id: params[:content_item][:social_network_ids])
-    @social_network_ids_with_publish_dates.each do |id_publish_date|
-      target = @publishing_targets.select { |target| target.social_network_id == id_publish_date.split(" ").first.to_i }.first
-      target.update(publish_date: id_publish_date.split(" ").last) if id_publish_date.split(" ").size == 2
     end
   end
 
